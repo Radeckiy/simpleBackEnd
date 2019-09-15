@@ -6,16 +6,12 @@ import org.springframework.data.annotation.Id;
 public class PotentialEmployees {
     @Id
     private ObjectId _id;
-    private String fullName, aboutYourself, vacancyRequired, contacts;
+    private String createDate, fullName, aboutYourself, vacancyRequired, contacts;
     private Integer age = 0, desiredWage = 0;
 
-    public PotentialEmployees() {
-
-    }
-
-    public PotentialEmployees(ObjectId _id, String fullName, String aboutYourself, String vacancyRequired,
-                              String contacts, Integer age, Integer desiredWage) {
+    public PotentialEmployees(ObjectId _id, String createDate, String fullName, String aboutYourself, String vacancyRequired, String contacts, Integer age, Integer desiredWage) {
         this._id = _id;
+        this.createDate = createDate;
         this.fullName = fullName;
         this.aboutYourself = aboutYourself;
         this.vacancyRequired = vacancyRequired;
@@ -30,6 +26,14 @@ public class PotentialEmployees {
 
     public void set_id(ObjectId _id) {
         this._id = _id;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
     }
 
     public String getFullName() {
