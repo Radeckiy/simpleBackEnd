@@ -1,11 +1,9 @@
-package com.jobhunter.simpleBackEnd;
+package com.jobhunter.simpleBackEnd.controllers;
 
-import com.jobhunter.simpleBackEnd.models.PotentialEmployees;
-import com.jobhunter.simpleBackEnd.repositories.PotentialEmployeesRepository;
+import com.jobhunter.simpleBackEnd.models.Employers;
+import com.jobhunter.simpleBackEnd.repositories.EmployersRepository;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,18 +14,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/potential_employees")
-public class PotentialEmployeesController {
-    private final PotentialEmployeesRepository repository;
+@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/employers")
+public class EmployersController {
+    private final EmployersRepository repository;
 
-    public PotentialEmployeesController(PotentialEmployeesRepository repository) {
+    public EmployersController(EmployersRepository repository) {
         this.repository = repository;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public List<PotentialEmployees> getPotentialEmployees(@RequestParam(required = false) Integer page,
-                                                             @RequestParam(required = false) String sortDirection,
-                                                             @RequestParam(required = false) String contains) {
+    public List<Employers> getEmployers(@RequestParam(required = false) Integer page,
+                                        @RequestParam(required = false) String sortDirection,
+                                        @RequestParam(required = false) String contains) {
 
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "createDate");
 
@@ -58,36 +57,37 @@ public class PotentialEmployeesController {
             return repository.findAll(pageRequest)
                     .getContent()
                     .stream()
-                    .filter(x -> x.getVacancyRequired().toLowerCase().contains(contains.toLowerCase()) || x.getAboutYourself().toLowerCase().contains(contains.toLowerCase()))
+                    .filter(x -> x.getVacancyRequired().toLowerCase().contains(contains.toLowerCase()) || x.getVacancyDescription().toLowerCase().contains(contains.toLowerCase()))
                     .collect(Collectors.toList());
 
         return repository.findAll(pageRequest).getContent();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public PotentialEmployees getPotentialEmployeeById(@PathVariable("id") ObjectId id) {
+    public Employers getEmployerById(@PathVariable("id") ObjectId id) {
         return repository.findBy_id(id);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public PotentialEmployees modifyPotentialEmployeeById(@PathVariable("id") ObjectId id, @Valid @RequestBody PotentialEmployees potentialEmployees) {
-        potentialEmployees.set_id(id);
-        potentialEmployees.setCreateDate(new SimpleDateFormat("dd.MM.yyyy 'at' HH:mm:ss").format(new Date()));
-        repository.save(potentialEmployees);
-        return potentialEmployees;
+    public Employers modifyEmployerById(@PathVariable("id") ObjectId id, @Valid @RequestBody Employers employers) {
+        employers.set_id(id);
+        employers.setCreateDate(new SimpleDateFormat("dd.MM.yyyy 'at' HH:mm:ss").format(new Date()));
+        repository.save(employers);
+        return employers;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public PotentialEmployees createPotentialEmployee(@Valid @RequestBody PotentialEmployees potentialEmployees) {
-        potentialEmployees.set_id(ObjectId.get());
-        potentialEmployees.setCreateDate(new SimpleDateFormat("dd.MM.yyyy 'at' HH:mm:ss").format(new Date()));
-        repository.save(potentialEmployees);
-        return potentialEmployees;
+    public Employers createEmployer(@Valid @RequestBody Employers employers) {
+        employers.set_id(ObjectId.get());
+        employers.setCreateDate(new SimpleDateFormat("dd.MM.yyyy 'at' HH:mm:ss").format(new Date()));
+        repository.save(employers);
+        return employers;
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public String deletePotentialEmployee(@PathVariable ObjectId id) {
+    public String deleteEmployer(@PathVariable ObjectId id) {
         repository.delete(repository.findBy_id(id));
         return "Deleted!";
     }
 }
+
